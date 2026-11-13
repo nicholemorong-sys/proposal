@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eee6dc">
+  <title>My Man — a little reminder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #594b47;
+      --muted: #8d7a72;
+      --rose: #bc7c76;
+      --paper: #fffaf0;
+      --envelope: #d7b6a0;
+      --envelope-dark: #c99e89;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100svh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 18% 18%, rgb(255 255 255 / 54%), transparent 35%),
+        radial-gradient(ellipse at 85% 82%, rgb(207 174 154 / 18%), transparent 36%),
+        #eee6dc;
+      font-family: "DM Sans", sans-serif;
+    }
+
+    main {
+      display: grid;
+      min-height: 100svh;
+      place-items: center;
+      overflow: hidden;
+      padding: 48px 20px;
+    }
+
+    .scene {
+      width: min(100%, 720px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--rose);
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Caveat", cursive;
+      font-size: clamp(3rem, 9vw, 4.5rem);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .hint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .gift {
+      position: relative;
+      display: flex;
+      min-height: 365px;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 3vw, 28px);
+      margin-top: 20px;
+      isolation: isolate;
+    }
+
+    .bouquet {
+      z-index: 1;
+      width: clamp(120px, 25vw, 190px);
+      flex: 0 0 auto;
+      overflow: visible;
+      filter: drop-shadow(0 12px 12px rgb(93 68 56 / 10%));
+      transform: rotate(-4deg);
+      transition: transform 350ms ease;
+    }
+
+    .bouquet:hover { transform: rotate(0) translateY(-5px); }
+
+    .envelope {
+      position: relative;
+      z-index: 2;
+      width: clamp(240px, 56vw, 390px);
+      height: clamp(165px, 38vw, 250px);
+      flex: 0 1 auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      perspective: 900px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .envelope:focus-visible {
+      outline: 3px solid #a76f68;
+      outline-offset: 9px;
+      border-radius: 6px;
+    }
+
+    .envelope-back,
+    .envelope-front,
+    .flap {
+      position: absolute;
+      inset: 0;
+      border-radius: 5px;
+    }
+
+    .envelope-back {
+      background: linear-gradient(145deg, #ddc1ad, var(--envelope));
+      box-shadow: 0 20px 36px rgb(82 61 48 / 16%);
+    }
+
+    .letter-panel {
+      max-width: 560px;
+      max-height: 0;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0 24px;
+      border-radius: 3px;
+      opacity: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 27px, rgb(173 146 117 / 7%) 28px),
+        radial-gradient(ellipse at 20% 12%, rgb(211 188 149 / 12%), transparent 58%),
+        var(--paper);
+      box-shadow: 0 10px 24px rgb(85 64 49 / 10%);
+      transform: translateY(-10px);
+      transition: max-height 650ms ease, margin 650ms ease, padding 650ms ease, transform 650ms ease, opacity 450ms ease;
+    }
+
+    .letter-panel h2 {
+      margin: 0 0 5px;
+      color: #a56c67;
+      font-family: "Caveat", cursive;
+      font-size: clamp(1.7rem, 5vw, 2.25rem);
+      font-weight: 500;
+    }
+
+    .letter-panel p {
+      max-width: 440px;
+      margin: 0;
+      font-family: "Caveat", cursive;
+      font-size: clamp(1.03rem, 3.1vw, 1.32rem);
+      line-height: 1.3;
+    }
+
+    .letter-panel .signoff { margin-top: 7px; color: #a56c67; }
+
+    .scene.is-open .letter-panel {
+      max-height: 360px;
+      margin: 16px auto 0;
+      padding: 22px clamp(18px, 5vw, 38px);
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 300ms, 300ms, 300ms, 300ms, 450ms;
+    }
+
+    .envelope-front {
+      z-index: 3;
+      overflow: hidden;
+      background: linear-gradient(145deg, #d6b49e, var(--envelope-dark));
+      clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .envelope-front::before,
+    .envelope-front::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+    }
+
+    .envelope-front::before {
+      background: linear-gradient(35deg, #d8b8a2 50%, transparent 50.3%);
+    }
+
+    .envelope-front::after {
+      background: linear-gradient(-35deg, #d1ad97 50%, transparent 50.3%);
+    }
+
+    .flap {
+      z-index: 4;
+      background: linear-gradient(160deg, #e1c5b0, #d0aa94);
+      clip-path: polygon(0 0, 100% 0, 50% 62%);
+      transform-origin: top center;
+      transition: transform 700ms cubic-bezier(.2, .7, .2, 1), z-index 0s 350ms;
+      backface-visibility: hidden;
+    }
+
+    .seal {
+      position: absolute;
+      z-index: 5;
+      top: 43%;
+      left: 50%;
+      display: grid;
+      width: 35px;
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1px solid rgb(255 255 255 / 42%);
+      border-radius: 50%;
+      color: #fff8f1;
+      background: #b97874;
+      font-size: 15px;
+      box-shadow: 0 2px 6px rgb(76 48 43 / 17%);
+      transform: translate(-50%, -50%);
+      transition: opacity 250ms ease, transform 250ms ease;
+    }
+
+    .envelope:not(.is-open):hover { transform: translateY(-4px); }
+    .envelope { transition: transform 300ms ease; }
+    .envelope.is-open .flap {
+      z-index: 0;
+      transform: rotateX(180deg);
+      transition: transform 700ms cubic-bezier(.2, .7, .2, 1), z-index 0s;
+    }
+    .envelope.is-open .seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.6);
+    }
+
+    .footer-note {
+      margin: 5px 0 0;
+      color: #9c8980;
+      font-family: "Caveat", cursive;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 480px) {
+      main { padding: 34px 14px; }
+      .gift { min-height: 310px; gap: 0; margin-top: 12px; }
+      .bouquet { width: clamp(100px, 30vw, 140px); margin-right: -6px; }
+      .envelope { width: clamp(220px, 62vw, 290px); height: clamp(150px, 43vw, 190px); }
+      .letter-panel p { font-size: clamp(.95rem, 4vw, 1.15rem); }
+      .scene.is-open .letter-panel { max-height: 420px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="scene" aria-labelledby="page-title">
+      <p class="eyebrow">a little something for you</p>
+      <h1 id="page-title">My Man</h1>
+      <p class="hint" id="envelope-hint">A note for when you need it. Tap to open.</p>
+
+      <div class="gift">
+        <svg class="bouquet" viewBox="0 0 190 230" role="img" aria-label="A little bouquet of flowers">
+          <g fill="none" stroke="#71806a" stroke-linecap="round" stroke-width="4">
+            <path d="M92 205 65 93M96 205 113 73M101 205 139 104M87 205 44 117M97 205 87 62"/>
+            <path d="M82 150c-22-21-37-15-39-5 15 9 25 14 42 17M112 144c16-25 34-21 38-11-12 11-22 17-38 23M77 128c-17-24-34-21-39-12 11 12 20 18 37 25M119 170c24-14 37-6 38 5-15 5-26 7-43 3"/>
+          </g>
+          <g fill="#839078">
+            <path d="M44 145c15-2 28 5 41 17-20 1-32-3-41-17ZM119 154c9-16 21-23 34-21-8 15-18 22-34 21ZM38 119c14 1 25 10 36 23-19-3-29-9-36-23ZM116 178c17-11 30-12 41-4-15 9-27 11-41 4Z"/>
+          </g>
+          <g fill="#d88f87">
+            <circle cx="87" cy="57" r="13"/><circle cx="87" cy="38" r="9"/><circle cx="104" cy="53" r="9"/>
+            <circle cx="87" cy="75" r="9"/><circle cx="69" cy="53" r="9"/><circle cx="105" cy="88" r="11"/>
+            <circle cx="105" cy="72" r="8"/><circle cx="120" cy="86" r="8"/><circle cx="105" cy="103" r="8"/>
+            <circle cx="90" cy="87" r="8"/><circle cx="139" cy="99" r="11"/><circle cx="139" cy="83" r="8"/>
+            <circle cx="154" cy="97" r="8"/><circle cx="139" cy="114" r="8"/><circle cx="124" cy="98" r="8"/>
+            <circle cx="48" cy="111" r="10"/><circle cx="48" cy="96" r="7"/><circle cx="62" cy="109" r="7"/>
+            <circle cx="48" cy="126" r="7"/><circle cx="34" cy="111" r="7"/>
+          </g>
+          <g fill="#edc9a1">
+            <circle cx="87" cy="57" r="4"/><circle cx="105" cy="88" r="3.5"/><circle cx="139" cy="99" r="3.5"/><circle cx="48" cy="111" r="3.5"/>
+          </g>
+          <path d="m60 177 79 4-23 35H81z" fill="#c9877e"/>
+          <path d="m98 181-8 25 20 2-8-27m-8 2-22-6c-8 12-1 22 17 20m14-13 22-7c7 12 0 21-17 19" fill="#d69a8e"/>
+          <path d="m90 204-9 13m26-11 8 12" fill="none" stroke="#bd786f" stroke-linecap="round" stroke-width="3"/>
+        </svg>
+
+        <button class="envelope" type="button" aria-expanded="false" aria-controls="letter" aria-describedby="envelope-hint" aria-label="Open your letter">
+          <span class="envelope-back" aria-hidden="true"></span>
+          <span class="envelope-front" aria-hidden="true"></span>
+          <span class="flap" aria-hidden="true"></span>
+          <span class="seal" aria-hidden="true">♡</span>
+        </button>
+      </div>
+      <article class="letter-panel" id="letter" aria-labelledby="letter-title" aria-hidden="true">
+        <h2 id="letter-title">Hey, you</h2>
+        <p>You don't have to have it all figured out right now. Please don't put so much pressure on yourself. It's okay to feel tired, and it's okay to feel overwhelmed. Take things one breath, one small step at a time. I hope you can trust yourself the way I believe in you. And whenever it feels like too much, remember: I'm always here for you. You don't have to carry it all alone.</p>
+        <p class="signoff">Always in your corner ♡</p>
+      </article>
+      <p class="footer-note">Made with love, just for you.</p>
+    </section>
+  </main>
+  <script>
+    const envelope = document.querySelector(".envelope");
+    const scene = document.querySelector(".scene");
+    const letter = document.querySelector(".letter-panel");
+
+    envelope.addEventListener("click", () => {
+      const isOpen = envelope.classList.toggle("is-open");
+      scene.classList.toggle("is-open", isOpen);
+      envelope.setAttribute("aria-expanded", String(isOpen));
+      envelope.setAttribute("aria-label", isOpen ? "Close your letter" : "Open your letter");
+      letter.setAttribute("aria-hidden", String(!isOpen));
+    });
+  </script>
+</body>
+</html>
